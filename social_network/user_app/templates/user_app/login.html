@@ -5,13 +5,12 @@
         <title>Document</title>
     </head>
     <body>
-        <h1>Сторінка реєстрації</h1>
+        <h1>Вхід</h1>
         <form method="post">
             {% csrf_token %}
-            <p><input type="text" placeholder="Логін" name="username" required></p>
-            <p><input type="password" placeholder="Пароль" name="password" required></p>
-            <p><input type="password" placeholder="Підтвердіть пароль" name="confirm_password" required></p>
-            <p><button>Зберегти</button></p>
+            <p><input type="text" placeholder = "Логін" name = "username" required></p>
+            <p><input type="password" placeholder = "Пароль" name = "password" required></p>
+            <p><button>Увійти</button></p>
         </form>
         {% if messages %}
             {% for message in messages %}
