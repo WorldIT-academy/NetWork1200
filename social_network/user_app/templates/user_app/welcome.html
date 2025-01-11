@@ -5,6 +5,8 @@
         <title>Document</title>
     </head>
     <body>
+        <!-- Привітання для поточного авторизованого користувача -->
         <h1>Вітаємо, {{ request.user.username }}</h1>
+        <a href="{% url 'logout' %}">Вийти</a>
     </body>
 </html>

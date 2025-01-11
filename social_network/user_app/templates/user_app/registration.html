@@ -6,14 +6,18 @@
     </head>
     <body>
         <h1>Сторінка реєстрації</h1>
+        <!-- Створюємо форму з методом запиту post -->
         <form method="post">
+            <!-- Створює csrf токен для підтвердження оригінальності форми -->
             {% csrf_token %}
             <p><input type="text" placeholder="Логін" name="username" required></p>
             <p><input type="password" placeholder="Пароль" name="password" required></p>
             <p><input type="password" placeholder="Підтвердіть пароль" name="confirm_password" required></p>
             <p><button>Зберегти</button></p>
         </form>
+        <!-- умова, якщо є повідомлення (помилки) -->
         {% if messages %}
+            <!-- виводиться текст помилки червоного кольору -->
             {% for message in messages %}
                 <p style="color: red;">{{ message }}</p>
             {% endfor %}
