@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.db.utils import IntegrityError
 from django.contrib.auth import login, authenticate, logout
+from .models import Profile
 
 
 def render_registration(request):
@@ -60,3 +61,6 @@ def logout_user(request):
     logout(request=request)
     return redirect('login')
 
+def render_all_profiles(request):
+    all_profiles = Profile.objects.all()
+    return render(request, 'user_app/all_profiles.html', context = {'all_profiles': all_profiles})
