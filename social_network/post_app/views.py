@@ -1,9 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Post, Tag
 from user_app.models import Profile
 from django.core.files.storage import FileSystemStorage
 import os
-# Create your views here.
+from django.contrib.auth.decorators import login_required
+from .forms import PostForm
+
+
 def render_all_posts(request):
     
     all_posts = Post.objects.all()
@@ -14,29 +17,29 @@ def render_all_posts(request):
         context = {"all_posts": all_posts}
         )
 
+# Декоратор відображає сторінку тільки якщо користувач авторизувався, 
+# інашке - перенаправлення на сторінку логіну за вказаним LOGIN_URL у settings.py
+@login_required
 def render_create_post(request):
-    # Якщо відправляється метотд POST, тобто якщо користувач надіслав форму
+    # Якщо відправляється метод POST, тобто якщо користувач надіслав форму
     if request.method == "POST":
-        # Отримуємо заголовок публікації з форми
-        title = request.POST.get("title")
-        # Отримуємо контент публікації з форми
-        content = request.POST.get("content")
-        # Отримуємо файл зображення з форми
-        image = request.FILES.get('image')
-        # Формуємо шлях для зображення
-        image_path = os.path.join('images', 'posts', image.name)
-        # Створюємо об'єкт файлової системи
-        fst = FileSystemStorage()
-        # Зберігаємо зображення, вказуючи шлях та об'єкт зображення
-        fst.save(image_path, image)
-        # Отримуємо користувача, який зараз залогінений
-        user = request.user
-        # Отримуємо профіль залогіненого користувача
-        author_profile = Profile.objects.get(user = user)
-        # Отримуємо список тегів з форми
-        tags = request.POST.getlist("tags")
+        # Створюємо об'єкт форми та наповнюємо даними, які надіслав користувач
+        form = PostForm(request.POST, request.FILES)
+        # Якщо дані, надіслані користувачем відповідають усім вимогам, описаним у класі PostForm
+        if form.is_valid():
+            post = Post.objects.create(
+                title = form.cleaned_data.get("title"),
+                content = form.cleaned_data.get("content"),
+                image = form.cleaned_data.get("image"),
+                author = Profile.objects.get(user = request.user)
+            )
 
-
-    all_tags = Tag.objects.all()
-
-    return render(request, template_name = "post_app/create_post.html", context = {'all_tags': all_tags})
+            post.tags.set(form.cleaned_data.get("tags"))
+            post.save()
+            
+            return redirect("all_posts") 
+    else:
+        # Створюємо об'єкт порожньої форми
+        form = PostForm()
+        
+    return render(request, template_name = "post_app/create_post.html", context = {'form': form})
