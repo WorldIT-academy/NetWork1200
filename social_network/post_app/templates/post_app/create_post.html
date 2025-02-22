@@ -8,7 +8,18 @@
     <h1>Створити пост</h1>
     <form action="" method="post" enctype = 'multipart/form-data'>
         {% csrf_token %}
-        {{ form.as_p }}
+        <!-- Перебираємо кожне поле форми -->
+        {% for field in form %}
+            <div class = 'form-field'>
+                <!-- Відображаємо підпис для поля форми -->
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <!-- Відображаємо поле форми -->
+                {{ field }}
+            </div>
+            <!-- Відображаємо помилки полів -->
+            <div class="field-errors">{{ field.errors }}</div>
+        {% endfor %}
+
         <p> 
             <button>Створити</button>
         </p>

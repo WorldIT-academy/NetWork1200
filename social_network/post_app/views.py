@@ -27,16 +27,10 @@ def render_create_post(request):
         form = PostForm(request.POST, request.FILES)
         # Якщо дані, надіслані користувачем відповідають усім вимогам, описаним у класі PostForm
         if form.is_valid():
-            post = Post.objects.create(
-                title = form.cleaned_data.get("title"),
-                content = form.cleaned_data.get("content"),
-                image = form.cleaned_data.get("image"),
-                author = Profile.objects.get(user = request.user)
-            )
-
-            post.tags.set(form.cleaned_data.get("tags"))
-            post.save()
-            
+            # Отримуємо профіль автора
+            author = Profile.objects.get(user = request.user)
+            # Зберігаємо усю форму
+            form.save(author)
             return redirect("all_posts") 
     else:
         # Створюємо об'єкт порожньої форми

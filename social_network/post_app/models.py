@@ -15,6 +15,8 @@ class Post(models.Model):
     author = models.ForeignKey(Profile, on_delete = models.CASCADE)
     tags = models.ManyToManyField(Tag)
 
+    
+
     def __str__(self):
         return self.title
 
