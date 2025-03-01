@@ -1,6 +1,32 @@
 from django import forms
 from .models import Tag, Post
+from django.core.exceptions import ValidationError
 
+
+class TagForm(forms.ModelForm):
+    class Meta:
+        model = Tag
+        fields = "__all__"
+
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+        if not name[0].isalpha():
+            raise ValidationError('Назва тегу може починатися тільки з букви.')
+        return name
+    
+    def clean(self):
+        super().clean()
+        active = self.cleaned_data.get("active")
+        description = self.cleaned_data.get("description")
+        icon = self.cleaned_data.get("icon")
+        if active:
+            if not icon or not description:
+                raise ValidationError("Для активних тегів опис та іконка є обов'язковими")
+        return self.cleaned_data
+        
+    
+            
+        
 # Створюємо клас для форми
 class PostForm(forms.ModelForm):
     # Свторюємо клас , що відповідає за налаштування форми
